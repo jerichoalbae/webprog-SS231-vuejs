@@ -4,7 +4,7 @@
       <p>{{ message }}</p>
     </div>
   </template>
-
+  
   <script>
   export default {
     data() {
@@ -15,7 +15,7 @@
     }
   };
   </script>
-
+  
   <style>
     .mango {
     border: dashed black 1px;
@@ -24,4 +24,4 @@
     padding: 10px;
     background-color: lightyellow;
   }
-</style>
+  </style>
