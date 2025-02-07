@@ -1,83 +1,51 @@
 <template>
-    <div>
-      <h2>Leave a Comment</h2>
-      <form @submit.prevent="submitComment">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" id="name" v-model="name" required class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="comment">Comment:</label>
-          <textarea id="comment" v-model="comment" required class="form-control"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <div v-if="submissionStatus" class="mt-2">
-          {{ submissionStatus }}
-        </div>
-      </form>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  import { supabase } from '../lib/supabaseClient'
+  <div>
+    <h2>Leave a Comment</h2>
+    <form @submit.prevent="submitComment">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" v-model="name" required class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="comment">Comment:</label>
+        <textarea id="comment" v-model="comment" required class="form-control"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <div v-if="submissionStatus" class="mt-2">
+        {{ submissionStatus }}
+      </div>
+    </form>
 
-  
-  const name = ref('');
-  const comment = ref('');
-  const submissionStatus = ref(null);
-  
-  // Your Supabase URL and Key - IMPORTANT!
-  const supabaseUrl = 'https://apnosoahfwrxgmklgwsv.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwbm9zb2FoZndyeGdta2xnd3N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgwMjY4NTUsImV4cCI6MjA1MzYwMjg1NX0.DBltgZtTB_Qv_o30-OsZ4ZmuYVJNmiUL5ruuG-Zaz34';
-  const tableName = 'comments'; // Name of your Supabase table
-  
-  async function submitComment() {
-    submissionStatus.value = "Submitting...";
-    try {
-      const { error } = await supabase
-        .from(tableName)
-        .insert([{ name: name.value, comment: comment.value }]);
-  
-      if (error) {
-        console.error("Error inserting comment:", error);
-        submissionStatus.value = "Error submitting comment. Please try again.";
-      } else {
-        submissionStatus.value = "Comment submitted successfully!";
-        name.value = ''; // Clear form fields
-        comment.value = '';
-      }
-    } catch (err) {
-      console.error("An unexpected error occurred:", err);
-      submissionStatus.value = "An unexpected error occurred. Please try again later.";
+    <div v-if="comments.length > 0" class="mt-4">
+      <h3>Comments</h3>
+      <div v-for="comment in comments":key="comment.id" class="comment">
+        <p><strong>{{ comment.name }}</strong>: {{ comment.comment }}</p>
+      </div>
+    </div>
+    <div v-else-if="commentsLoading">
+      <p>Loading comments...</p>
+    </div>
+    <div v-else>
+      <p>No comments yet.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+import { createClient } from '@supabase/supabase-js'
+
+export default {
+  data() {
+    return {
+      name: '',
+      comment: '',
+      submissionStatus: null,
+      supabase: null,
+      supabaseUrl: 'https://cazxhjkovppowqvuabid.supabase.co', // Your Supabase URL - DEVELOPMENT ONLY
+      supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNhenhoamtvdnBwb3dxdnVhYmlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgyNTQ5ODgsImV4cCI6MjA1MzgzMDk4OH0.ETEdCfuWtOUNggWDqGQVYXRS1N1yKoU-Vwq-qEeIjHo', // Your Supabase Anon Key - DEVELOPMENT ONLY
+      tableName: 'comments',
+      comments:,
+      commentsLoading: true
     }
-  }
-  </script>
-  
-  <style scoped>
-  /* Basic styling - Customize as needed */
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  </style>
+  },
+  mounted
