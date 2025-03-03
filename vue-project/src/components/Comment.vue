@@ -13,7 +13,7 @@
       display: inline-block;
       margin: 10px;
       padding: 10px;
-      background-color: lightyellow;
+      background-color: lightpink;
     }
   </style>
 
@@ -41,6 +41,6 @@ onMounted(() => {
     display: inline-block;
     margin: 10px;
     padding: 10px;
-    background-color: lightyellow;
+    background-color: lightpink;
   }
 </style>
